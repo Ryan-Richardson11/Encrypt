@@ -1,6 +1,8 @@
 from Crypto.Cipher import AES, DES, DES3, PKCS1_OAEP
 from Crypto.PublicKey import RSA
 from Crypto.Random import get_random_bytes
+from tkinter import filedialog
+import os
 
 
 class Encrypt:
@@ -150,19 +152,40 @@ class Encrypt:
         private = key.export_key()
         public = key.publickey().export_key()
 
-        with open("private.pem", "wb") as private_key_file:
+        key_dir = filedialog.askdirectory(
+            title="Choose a Directory to Save the Keys")
+        if not key_dir:
+            print("Operation canceled")
+            return
+        private_key_path = os.path.join(key_dir, "private.pem")
+        public_key_path = os.path.join(key_dir, "public.pem")
+
+        with open(private_key_path, "wb") as private_key_file:
             private_key_file.write(private)
 
-        with open("public.pem", "wb") as public_key_file:
+        with open(public_key_path, "wb") as public_key_file:
             public_key_file.write(public)
 
-    def encrypt_RSA(self, file_name, public_key_file="public.pem"):
-        # Read the public key from file
-        with open(public_key_file, "rb") as pub_key_file:
-            public_key = RSA.import_key(pub_key_file.read())
+        print(f"Keys saved to {key_dir}")
 
-        # Create an RSA cipher using OAEP padding (secure padding scheme)
-        cipher_rsa = PKCS1_OAEP.new(public_key)
+    def encrypt_RSA(self, file_name, public_key_file="public.pem"):
+        key_file = filedialog.askopenfile(
+            title="Select the Public Key")
+        if not key_file:
+            print("Operation canceled")
+            return
+        public_key_path = key_file.name
+
+        # Read the public key from file
+        try:
+            with open(public_key_path, "rb") as pub_key_file:
+                public_key = RSA.import_key(pub_key_file.read())
+
+            # Create an RSA cipher using OAEP padding (secure padding scheme)
+            cipher_rsa = PKCS1_OAEP.new(public_key)
+        except (ValueError, TypeError) as e:
+            print(f"Invalid Key: {e}")
+            return
 
         # Read the file and encrypt it
         with open(file_name, "rb") as input_file:

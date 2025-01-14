@@ -58,9 +58,13 @@ def display_encryption_tab(frame):
     des3_radio.grid(row=2, column=0, padx=10, pady=10)
 
     # Asymmetric Encryption
+    gkey_radio = create_radio_button(
+        encryption_options_frame_asym, "Keys", "gkey", 0, 0)
+    gkey_radio.grid(row=0, column=0, padx=10, pady=10)
+
     rsa_radio = create_radio_button(
-        encryption_options_frame_asym, "RSA", "rsa-e", 0, 0)
-    rsa_radio.grid(row=0, column=0, padx=10, pady=10)
+        encryption_options_frame_asym, "RSA", "rsa-e", 1, 0)
+    rsa_radio.grid(row=1, column=0, padx=10, pady=10)
 
     # Symmetric Decryption
     aes_radio = create_radio_button(
@@ -77,7 +81,7 @@ def display_encryption_tab(frame):
 
     # Asymmetric Encryption
     rsa_radio = create_radio_button(
-        decryption_options_frame_asym, "RSA", "rsa-d", 0, 0)
+        decryption_options_frame_asym, "RSA", "rsa-d", 0, 1)
     rsa_radio.grid(row=0, column=0, padx=10, pady=10)
 
 # ===========================================================================================================================================================
@@ -128,19 +132,22 @@ def display_encryption_tab(frame):
             current.encrypt_3DES(file_path)
         elif algorithm == "3des-d":
             current.decrypt_3DES(file_path)
-        # elif algorithm == "sha3_384":
-        #     hashed = current.hash_password_SHA3_384(password)
-        # elif algorithm == "sha3_512":
-        #     hashed = current.hash_password_SHA3_512(password)
+        elif algorithm == "gkey":
+            current.generate_RSA_Key()
+        elif algorithm == "rsa-e":
+            current.encrypt_RSA(file_path)
         # elif algorithm == "sha3_shake128":
         #     hashed = current.hash_password_SHA3_shake128(password)
         # elif algorithm == "sha3_shake256":
         #     hashed = current.hash_password_SHA3_shake256(password)
         # elif algorithm == "md5":
         #     hashed = current.hash_password_md5(password)
-
-        file_result_label.config(
-            text=f"File saved to same directory")
+        if algorithm == "gkey":
+            file_result_label.config(
+                text=f"Keys Generated")
+        else:
+            file_result_label.config(
+                text=f"File saved to same directory")
 
     # File Hash Button
     file_hash_button = Button(frame, text="Execute", command=encrypt_file)

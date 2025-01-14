@@ -15,9 +15,9 @@ def render_app():
     notebook.pack(expand=True, fill=BOTH)
 
     password_hash_tab = utils.add_tab(notebook, "Hash Passwords")
-    file_hash_tab = utils.add_tab(notebook, "Encryption Keys")
+    encryption_tab = utils.add_tab(notebook, "Encryption Keys")
 
     display_hash_tab(password_hash_tab)
-    display_encryption_tab(file_hash_tab)
+    display_encryption_tab(encryption_tab)
 
     window.mainloop()
