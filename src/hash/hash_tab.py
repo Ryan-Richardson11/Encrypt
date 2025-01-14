@@ -193,9 +193,6 @@ def display_hash_tab(frame):
         if file_path == "":
             file_result_label.config(text="Please enter a file path")
             return
-        if salt_applied:
-            salt = salt_result_label.cget("text")[6:]
-            file_path += salt
 
         hashed = None
         if algorithm == "sha1":

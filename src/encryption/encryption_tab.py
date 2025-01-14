@@ -120,14 +120,14 @@ def display_encryption_tab(frame):
             current.encrypt_AES(file_path)
         elif algorithm == "aes-d":
             current.decrypt_AES(file_path)
-        # elif algorithm == "sha2_256":
-        #     hashed = current.hash_password_SHA2_256(password)
-        # elif algorithm == "sha2_512":
-        #     hashed = current.hash_password_SHA2_512(password)
-        # elif algorithm == "sha3_224":
-        #     hashed = current.hash_password_SHA3_224(password)
-        # elif algorithm == "sha3_256":
-        #     hashed = current.hash_password_SHA3_256(password)
+        elif algorithm == "des-e":
+            current.encrypt_DES(file_path)
+        elif algorithm == "des-d":
+            current.decrypt_DES(file_path)
+        elif algorithm == "3des-e":
+            current.encrypt_3DES(file_path)
+        elif algorithm == "3des-d":
+            current.decrypt_3DES(file_path)
         # elif algorithm == "sha3_384":
         #     hashed = current.hash_password_SHA3_384(password)
         # elif algorithm == "sha3_512":
@@ -140,7 +140,7 @@ def display_encryption_tab(frame):
         #     hashed = current.hash_password_md5(password)
 
         file_result_label.config(
-            text=f"File Save as {file_path}.enc")
+            text=f"File saved to same directory")
 
     # File Hash Button
     file_hash_button = Button(frame, text="Execute", command=encrypt_file)
