@@ -1,4 +1,4 @@
-from src.render.run_app import render_app
+from render.run_app import render_app
 
 """
 Main function driver code to run application

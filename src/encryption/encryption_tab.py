@@ -1,4 +1,4 @@
-from src.encryption.encryption_functions import Encrypt
+from encryption.encryption_functions import Encrypt
 from tkinter import *
 from tkinter import filedialog
 
@@ -136,12 +136,8 @@ def display_encryption_tab(frame):
             current.generate_RSA_Key()
         elif algorithm == "rsa-e":
             current.encrypt_RSA(file_path)
-        # elif algorithm == "sha3_shake128":
-        #     hashed = current.hash_password_SHA3_shake128(password)
-        # elif algorithm == "sha3_shake256":
-        #     hashed = current.hash_password_SHA3_shake256(password)
-        # elif algorithm == "md5":
-        #     hashed = current.hash_password_md5(password)
+        elif algorithm == "rsa-d":
+            hashed = current.decrypt_RSA(file_path)
         if algorithm == "gkey":
             file_result_label.config(
                 text=f"Keys Generated")

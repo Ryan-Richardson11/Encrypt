@@ -1,7 +1,7 @@
-from src.hash.hash_functions import Hash
+from hash.hash_functions import Hash
 from tkinter import *
 from tkinter import filedialog
-from src.utils import add_salt
+from utils import add_salt
 
 """
 Displays whole hash tab.

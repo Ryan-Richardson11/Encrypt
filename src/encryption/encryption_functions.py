@@ -168,55 +168,74 @@ class Encrypt:
 
         print(f"Keys saved to {key_dir}")
 
-    def encrypt_RSA(self, file_name, public_key_file="public.pem"):
-        key_file = filedialog.askopenfile(
-            title="Select the Public Key")
+    def encrypt_RSA(self, file_name):
+        # Ask the user to select a public key
+        key_file = filedialog.askopenfile(title="Select the Public Key")
         if not key_file:
             print("Operation canceled")
             return
         public_key_path = key_file.name
 
-        # Read the public key from file
+        # Read the public key
         try:
             with open(public_key_path, "rb") as pub_key_file:
                 public_key = RSA.import_key(pub_key_file.read())
-
-            # Create an RSA cipher using OAEP padding (secure padding scheme)
             cipher_rsa = PKCS1_OAEP.new(public_key)
         except (ValueError, TypeError) as e:
             print(f"Invalid Key: {e}")
             return
 
-        # Read the file and encrypt it
+        # Generate a random AES key
+        aes_key = get_random_bytes(16)
+        encrypted_key = cipher_rsa.encrypt(aes_key)
+
+        # Encrypt the file using AES
         with open(file_name, "rb") as input_file:
             data = input_file.read()
-            encrypted = cipher_rsa.encrypt(data)
+        cipher_aes = AES.new(aes_key, AES.MODE_EAX)
+        ciphertext, tag = cipher_aes.encrypt_and_digest(data)
 
         # Save the encrypted file
         encrypted_file = file_name + ".enc"
-        with open(encrypted_file, "wb") as encrypted_file:
-            encrypted_file.write(encrypted)
+        with open(encrypted_file, "wb") as output_file:
+            # Save RSA-encrypted AES key, nonce, tag, and ciphertext
+            output_file.write(encrypted_key)
+            output_file.write(cipher_aes.nonce)
+            output_file.write(tag)
+            output_file.write(ciphertext)
 
-        print(f"File encrypted and saved as {encrypted_file.name}")
+        print(f"File encrypted and saved as {encrypted_file}")
 
-    def decrypt_RSA(self, encrypted_file_name, private_key_file="private.pem"):
-        # Read the private key from file
-        with open(private_key_file, "rb") as priv_key_file:
+    def decrypt_RSA(self, encrypted_file_name):
+        # Ask the user to select a private key
+        key_file = filedialog.askopenfile(title="Select the Private Key")
+        if not key_file:
+            print("Operation canceled")
+            return
+        private_key_path = key_file.name
+
+        # Read the private key
+        with open(private_key_path, "rb") as priv_key_file:
             private_key = RSA.import_key(priv_key_file.read())
-
-        # Create an RSA cipher using OAEP padding (same padding as for encryption)
         cipher_rsa = PKCS1_OAEP.new(private_key)
 
-        # Read the encrypted file and decrypt it
-        with open(encrypted_file_name, "rb") as encrypted_file:
-            encrypted_data = encrypted_file.read()
-            decrypted_data = cipher_rsa.decrypt(encrypted_data)
+        # Read the encrypted file
+        with open(encrypted_file_name, "rb") as input_file:
+            encrypted_key = input_file.read(256)  # RSA-encrypted AES key
+            nonce = input_file.read(16)  # AES nonce
+            tag = input_file.read(16)  # AES tag
+            ciphertext = input_file.read()  # AES-encrypted data
 
-        # Replace ".enc" in the file name to create the decrypted file name
+        # Decrypt the AES key
+        aes_key = cipher_rsa.decrypt(encrypted_key)
+
+        # Decrypt the file using AES
+        cipher_aes = AES.new(aes_key, AES.MODE_EAX, nonce=nonce)
+        data = cipher_aes.decrypt_and_verify(ciphertext, tag)
+
+        # Save the decrypted file
         decrypted_file_name = encrypted_file_name.replace(".enc", "_decrypted")
-
-        # Save the decrypted data to the new file
-        with open(decrypted_file_name, "wb") as decrypted_file:
-            decrypted_file.write(decrypted_data)
+        with open(decrypted_file_name, "wb") as output_file:
+            output_file.write(data)
 
         print(f"File decrypted and saved as {decrypted_file_name}")

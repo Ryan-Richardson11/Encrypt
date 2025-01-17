@@ -1,8 +1,8 @@
-from src.hash.hash_tab import display_hash_tab
-from src.encryption.encryption_tab import display_encryption_tab
+from hash.hash_tab import display_hash_tab
+from encryption.encryption_tab import display_encryption_tab
 from tkinter import *
 from tkinter import ttk
-import src.utils as utils
+import utils as utils
 
 
 def render_app():
