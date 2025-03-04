@@ -13,6 +13,7 @@ class Hash:
         hashed = hashlib.sha1(
             f"{password}".encode(), usedforsecurity=True).hexdigest()
         return hashed
+    # FINISH FILE HASH FUNCTIONS
 
     def hash_file_SHA1(self, file_path):
         with open(file_path, 'rb', buffering=0) as f:
